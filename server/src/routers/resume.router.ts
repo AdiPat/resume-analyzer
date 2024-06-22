@@ -1,4 +1,5 @@
 // usersRouter.ts
+import "../commons/config";
 import express from "express";
 import multer from "multer";
 import AWS from "aws-sdk";
@@ -64,7 +65,9 @@ resumeRouter.post(
 
 // Define a GET route
 resumeRouter.get("/", (req, res) => {
-  res.send("Users list");
+  res.json({
+    message: "Hello World!",
+  });
 });
 
 // Define a POST route

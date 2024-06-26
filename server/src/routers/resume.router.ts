@@ -5,6 +5,7 @@ import multer from "multer";
 import AWS from "aws-sdk";
 import { nanoid } from "nanoid";
 import { StatusCodes } from "http-status-codes";
+import { db } from "../core";
 
 if (
   !(
@@ -35,7 +36,7 @@ resumeRouter.post(
   "/upload",
   upload.single("file"),
   async (req: express.Request, res: express.Response) => {
-    const resumeId = nanoid();
+    const uploadId = nanoid();
 
     if (!req.file) {
       return res.status(StatusCodes.BAD_REQUEST).json({
@@ -47,13 +48,13 @@ resumeRouter.post(
 
     if (!bucketName) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        message: "AWS bucket name is not defined.",
+        error: "AWS bucket name is not defined.",
       });
     }
 
     const params = {
       Bucket: bucketName, // The name of your S3 bucket
-      Key: `resumes/${resumeId}_${req.file.originalname}`, // File name you want to save as
+      Key: `resumes/${uploadId}_${req.file.originalname}`, // File name you want to save as
       Body: req.file.buffer, // The file binary data
       ContentType: req.file.mimetype, // File content type
       //ACL: "public-read", // File access control
@@ -70,12 +71,32 @@ resumeRouter.post(
 
     if (!uploadResult) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        message: "Failed to upload resume to S3.",
+        error: "Failed to upload resume to S3.",
+      });
+    }
+
+    const dbCreateResult = await db.resumeFile
+      .create({
+        data: {
+          fileName: req.file.originalname,
+          uploadId,
+          bucket: uploadResult.Bucket,
+          key: uploadResult.Key,
+        },
+      })
+      .catch((err) => {
+        console.error("failed to save resume details to database", err);
+        return null;
+      });
+
+    if (!dbCreateResult) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: "Failed to save resume details to database.",
       });
     }
 
     res.status(StatusCodes.CREATED).json({
-      resumeId: resumeId,
+      uploadId,
       message: "File uploaded successfully.",
     });
   }

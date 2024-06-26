@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { cache } from "../common";
+import { Input } from "@nextui-org/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 interface Upload {
   uploadId: string;
@@ -7,24 +10,33 @@ interface Upload {
 }
 
 function UploadsPage() {
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [uploads, setUploads] = useState<Upload[]>([]);
 
   useEffect(() => {
     const loadUploads = async () => {
       const allKeys = await cache.getAllKeys();
       const uploadKeys = allKeys.filter((key) => key.startsWith("uploads_"));
-      const uploads = await Promise.all(
+      let uploads = await Promise.all(
         uploadKeys.map(async (key) => {
           const data = await cache.get(key);
           return data;
         })
       );
 
+      if (searchQuery) {
+        uploads = uploads.filter(
+          (upload) =>
+            upload.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            upload.uploadId.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
+
       setUploads(uploads);
     };
 
     loadUploads();
-  }, []);
+  }, [searchQuery]);
 
   return (
     <div
@@ -35,6 +47,14 @@ function UploadsPage() {
         Uploads
       </h1>
       <p className="text-white text-center">Click to view analyzed resumes.</p>
+      <Input
+        type="email"
+        label="Email"
+        placeholder="you@example.com"
+        labelPlacement="outside"
+        startContent={<FontAwesomeIcon icon={faSearch} />}
+        onValueChange={setSearchQuery}
+      />
       <div className="flex flex-col mt-4 gap-4">
         {uploads.map((upload, idx) => (
           <div

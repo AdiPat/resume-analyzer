@@ -19,4 +19,4 @@ app.listen(APP_PORT, () => {
   console.log(`${APP_NAME} app listening on port ${APP_PORT}`);
 });
 
-export {};
+export { app };

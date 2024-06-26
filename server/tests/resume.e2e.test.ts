@@ -1,9 +1,5 @@
 import request from "supertest";
-import express from "express";
-import { resumeRouter } from "../src/routers"; // Import your router
-
-const app = express(); // Create an instance of your express app
-app.use("/resume", resumeRouter); // Use your router
+import { app } from "../src";
 
 describe("GET /resume", () => {
   it("responds with json", async () => {

@@ -1,8 +1,12 @@
 import "./App.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@nextui-org/button";
+import { uploadFile } from "./api";
 
 function App() {
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
   const inputFile = useRef(null);
 
   useEffect(() => {
@@ -16,12 +20,25 @@ function App() {
     }
   };
 
-  const handleFileChange = (
+  const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  ): Promise<void> => {
     const file = event.target.files?.[0];
     if (file) {
       console.log(file);
+      const uploadId = await uploadFile(file);
+
+      if (!uploadId) {
+        setSuccessMessage(null);
+        setError("Failed to upload file. Try again. ");
+        return;
+      }
+
+      setError(null);
+      setSuccessMessage(
+        `File uploaded successfully. UploadID: ${uploadId}. Save the upload ID somewhere!`
+      );
+      console.log("Uploaded file with upload ID:", uploadId);
     }
   };
 
@@ -56,6 +73,20 @@ function App() {
         <Button color="primary" size="lg">
           View Analyzed Resumes
         </Button>
+      </div>
+      <div className="bg-white mt-4 rounded-lg">
+        {error && (
+          <div className="bg-red-500 text-white p-4 rounded-lg text-center font-bold">
+            {error}
+          </div>
+        )}
+      </div>
+      <div>
+        {successMessage && (
+          <div className="bg-green-500 text-white p-4 rounded-lg text-center font-bold mt-4">
+            {successMessage}
+          </div>
+        )}
       </div>
     </div>
   );

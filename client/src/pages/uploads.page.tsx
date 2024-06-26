@@ -46,7 +46,9 @@ function UploadsPage() {
       <h1 className="text-4xl font-bold mb-4 text-white text-center">
         Uploads
       </h1>
-      <p className="text-white text-center">Click to view analyzed resumes.</p>
+      <p className="text-white text-center mb-4">
+        Click to view analyzed resumes.
+      </p>
       <Input
         type="email"
         label="Email"
@@ -54,11 +56,12 @@ function UploadsPage() {
         labelPlacement="outside"
         startContent={<FontAwesomeIcon icon={faSearch} />}
         onValueChange={setSearchQuery}
+        className="mb-8"
       />
       <div className="flex flex-col mt-4 gap-4">
         {uploads.map((upload, idx) => (
           <div
-            className="p-2 bg-orange-200 rounded-lg cursor-pointer hover:bg-gray-300 transition duration-200 transform hover:scale-105"
+            className="p-2 mb-4 bg-orange-400 rounded-lg cursor-pointer hover:bg-gray-300 transition duration-200 transform hover:scale-105"
             key={upload.uploadId}
           >
             <span className="mr-2">{idx + 1}</span>

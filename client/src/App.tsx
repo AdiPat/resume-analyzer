@@ -2,6 +2,7 @@ import "./App.css";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@nextui-org/button";
 import { uploadFile } from "./api";
+import { cache } from "./common";
 
 function App() {
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +40,10 @@ function App() {
         `File uploaded successfully. UploadID: ${uploadId}. Save the upload ID somewhere!`
       );
       console.log("Uploaded file with upload ID:", uploadId);
+
+      const key = `uploads_${uploadId}`;
+
+      cache.set(key, { uploadId, filename: File.name });
     }
   };
 

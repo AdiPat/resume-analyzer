@@ -76,11 +76,11 @@ function App() {
             ref={inputFile}
           />
         </Button>
-        <Button color="primary" size="lg">
-          <Link to={"/uploads"} className="no-underline">
+        <Link to={"/uploads"} className="no-underline">
+          <Button color="primary" size="lg">
             View Analyzed Resumes
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
       <div className="bg-white mt-4 rounded-lg">
         {error && (

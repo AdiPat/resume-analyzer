@@ -1,3 +1,3 @@
 type ID = string;
 
-export { ID };
+export type { ID };

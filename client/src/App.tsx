@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@nextui-org/button";
 import { uploadFile } from "./api";
 import { cache } from "./common";
+import { Link } from "react-router-dom";
 
 function App() {
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +77,9 @@ function App() {
           />
         </Button>
         <Button color="primary" size="lg">
-          View Analyzed Resumes
+          <Link to={"/uploads"} className="no-underline">
+            View Analyzed Resumes
+          </Link>
         </Button>
       </div>
       <div className="bg-white mt-4 rounded-lg">

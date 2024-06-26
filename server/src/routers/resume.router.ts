@@ -3,6 +3,8 @@ import "../commons/config";
 import express from "express";
 import multer from "multer";
 import AWS from "aws-sdk";
+import { nanoid } from "nanoid";
+import { StatusCodes } from "http-status-codes";
 
 if (
   !(
@@ -32,33 +34,49 @@ const resumeRouter = express.Router();
 resumeRouter.post(
   "/upload",
   upload.single("file"),
-  (req: express.Request, res: express.Response) => {
+  async (req: express.Request, res: express.Response) => {
+    const resumeId = nanoid();
+
     if (!req.file) {
-      return res.status(400).send("No file uploaded.");
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "No file uploaded.",
+      });
     }
 
     const bucketName = process.env.AWS_BUCKET_NAME;
 
     if (!bucketName) {
-      return res.status(500).send("AWS bucket name is not defined.");
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: "AWS bucket name is not defined.",
+      });
     }
 
     const params = {
       Bucket: bucketName, // The name of your S3 bucket
-      Key: `resumes/${req.file.originalname}`, // File name you want to save as
+      Key: `resumes/${resumeId}_${req.file.originalname}`, // File name you want to save as
       Body: req.file.buffer, // The file binary data
       ContentType: req.file.mimetype, // File content type
       //ACL: "public-read", // File access control
     };
 
     // Upload the file to S3
-    s3.upload(params, (err: any, data: any) => {
-      if (err) {
-        console.error("Error uploading to S3:", err);
-        return res.status(500).send("Failed to upload file.");
-      }
-      console.log("Successfully uploaded file to S3:", data);
-      res.send({ message: "File uploaded successfully.", data });
+    const uploadResult = await s3
+      .upload(params)
+      .promise()
+      .catch((err) => {
+        console.error("failed to upload resume to S3", err);
+        return null;
+      });
+
+    if (!uploadResult) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: "Failed to upload resume to S3.",
+      });
+    }
+
+    res.status(StatusCodes.CREATED).json({
+      resumeId: resumeId,
+      message: "File uploaded successfully.",
     });
   }
 );
@@ -68,11 +86,6 @@ resumeRouter.get("/", (req, res) => {
   res.json({
     message: "Hello World!",
   });
-});
-
-// Define a POST route
-resumeRouter.post("/", (req, res) => {
-  res.send("Create user");
 });
 
 export { resumeRouter };

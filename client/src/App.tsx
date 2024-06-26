@@ -44,7 +44,7 @@ function App() {
 
       const key = `uploads_${uploadId}`;
 
-      cache.set(key, { uploadId, filename: File.name });
+      cache.set(key, { uploadId, filename: file.name });
     }
   };
 

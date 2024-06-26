@@ -14,10 +14,13 @@ async function uploadFile(file: File): Promise<ID | null> {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch("/resume/upload", {
-    method: "POST",
-    body: formData,
-  })
+  const response = await fetch(
+    `${process.env.REACT_APP_API_BASE_URL}/resume/upload`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  )
     .then((res) => res.json() as unknown as UploadFileResponse)
     .catch((err) => {
       console.error("failed to upload file", err);

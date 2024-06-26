@@ -3,9 +3,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import { APP_NAME, APP_PORT } from "./commons/constants";
 import { resumeRouter } from "./routers";
+import cors from "cors";
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

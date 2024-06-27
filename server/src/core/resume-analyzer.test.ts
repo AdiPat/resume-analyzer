@@ -17,12 +17,12 @@ describe("resume-analyzer", () => {
     const resumeAnalyzer = new ResumeAnalyzer(SAMPLE_RESUME_KEY);
     await resumeAnalyzer.parseResume();
     const presentationScore = await resumeAnalyzer.getPresentationScore();
-    console.log({ presentationScore });
     expect(presentationScore).toHaveProperty("presentation");
     expect(presentationScore.presentation).toHaveProperty("score");
     expect(presentationScore.presentation).toHaveProperty("description");
   });
-  it("should have a language and keywords score, description and ", async () => {
+
+  it("should have a language and keywords score, description and keywords. ", async () => {
     const resumeAnalyzer = new ResumeAnalyzer(SAMPLE_RESUME_KEY);
     await resumeAnalyzer.parseResume();
     const languageScore = await resumeAnalyzer.getLanguageAnalysis();
@@ -30,5 +30,15 @@ describe("resume-analyzer", () => {
     expect(languageScore.language_and_keywords).toHaveProperty("score");
     expect(languageScore.language_and_keywords).toHaveProperty("description");
     expect(languageScore.language_and_keywords).toHaveProperty("keywords");
+  });
+
+  it("should have a impact score, description and skills. ", async () => {
+    const resumeAnalyzer = new ResumeAnalyzer(SAMPLE_RESUME_KEY);
+    await resumeAnalyzer.parseResume();
+    const impactScore = await resumeAnalyzer.getImpactScore();
+    expect(impactScore).toHaveProperty("impact");
+    expect(impactScore.impact).toHaveProperty("score");
+    expect(impactScore.impact).toHaveProperty("description");
+    expect(impactScore.impact).toHaveProperty("skills");
   });
 });

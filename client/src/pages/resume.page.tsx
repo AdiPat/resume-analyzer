@@ -1,7 +1,12 @@
+import { useEffect } from "react";
 import { useParams } from "react-router";
 
 function ResumePage() {
   const { uploadId } = useParams();
+
+  useEffect(() => {
+    document.title = "Resume Analysis";
+  });
 
   return (
     <div

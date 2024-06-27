@@ -55,20 +55,19 @@ function App() {
     <div className="home-container border border-gray-400 bg-gray-800 rounded-lg flex flex-col p-8 my-32 mx-auto mx-4">
       <div className="flex justify-between items-center">
         <Image className="mr-8" src="/logo.png" width={300} height={300} />
-        <div className="ml-8">
+        <div className="ml-4">
           <h1 className="text-4xl font-bold text-white mb-4 text-center">
             Resume Analyzer 📈
           </h1>
           <p className="text-white mb-4">
-            Resume Analyzer is a simple tool to analyze resumes. It gives you
-            detailed insights on the content, structure, keywords, and various
-            other parameters that you could leverage to optimize your resume.
-            Run the analysis and then get back to the drawing board to optimize
-            your resume.
+            Optimize Your Resume. Achieve Your Dream Job. ✅
           </p>
           <p className="text-white">
-            Crack your dream job by optimizing your resume with Resume Analyzer.
-            ✅
+            In today's competitive job market, your resume is your first
+            impression. Make it count with Resume Analyzer, your go-to tool for
+            analyzing and optimizing your resume.
+            <br /> Unlock your potential and get noticed by recruiters with our
+            comprehensive, user-friendly resume analysis.
           </p>
 
           <div className="home-controls md:flex sm:flex sm:flex-col gap-4 mt-6 justify-center">

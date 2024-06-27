@@ -4,6 +4,9 @@ import { Button } from "@nextui-org/button";
 import { uploadFile } from "./api";
 import { cache } from "./common";
 import { Link } from "react-router-dom";
+import { Image } from "@nextui-org/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFile, faDatabase } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
   const [error, setError] = useState<string | null>(null);
@@ -49,39 +52,56 @@ function App() {
   };
 
   return (
-    <div
-      className="border border-gray-400 bg-gray-800 rounded-lg flex flex-col p-8 my-32 mx-auto"
-      style={{ width: "80%" }}
-    >
-      <h1 className="text-4xl font-bold text-white mb-4 text-center">
-        Resume Analyzer 📈
-      </h1>
-      <p className="text-white mb-4 text-center">
-        Resume Analyzer is a simple tool to analyze resumes. It gives you
-        detailed insights on the content, structure, keywords, and various other
-        parameters that you could leverage to optimize your resume. Run the
-        analysis and then get back to the drawing board to optimize your resume.
-      </p>
-      <p className="text-white text-center">
-        Crack your dream job by optimizing your resume with Resume Analyzer. ✅
-      </p>
-      <div className="flex gap-4 mt-4 justify-center">
-        <Button color="primary" size="lg" onClick={handleUploadClick}>
-          Upload Resume
-          <input
-            onChange={handleFileChange}
-            className="hidden"
-            type="file"
-            id="file"
-            ref={inputFile}
-          />
-        </Button>
-        <Link to={"/uploads"} className="no-underline">
-          <Button color="primary" size="lg">
-            View Analyzed Resumes
-          </Button>
-        </Link>
+    <div className="home-container border border-gray-400 bg-gray-800 rounded-lg flex flex-col p-8 my-32 mx-auto mx-4">
+      <div className="flex justify-between items-center">
+        <Image className="mr-8" src="/logo.png" width={300} height={300} />
+        <div className="ml-8">
+          <h1 className="text-4xl font-bold text-white mb-4 text-center">
+            Resume Analyzer 📈
+          </h1>
+          <p className="text-white mb-4">
+            Resume Analyzer is a simple tool to analyze resumes. It gives you
+            detailed insights on the content, structure, keywords, and various
+            other parameters that you could leverage to optimize your resume.
+            Run the analysis and then get back to the drawing board to optimize
+            your resume.
+          </p>
+          <p className="text-white">
+            Crack your dream job by optimizing your resume with Resume Analyzer.
+            ✅
+          </p>
+
+          <div className="home-controls md:flex sm:flex sm:flex-col gap-4 mt-6 justify-center">
+            <Button
+              color="primary"
+              size="lg"
+              onClick={handleUploadClick}
+              className="upload-button mx-auto"
+              startContent={<FontAwesomeIcon icon={faFile} />}
+            >
+              Upload Resume
+              <input
+                onChange={handleFileChange}
+                className="hidden"
+                type="file"
+                id="file"
+                ref={inputFile}
+              />
+            </Button>
+            <Link to={"/uploads"} className="view-button no-underline">
+              <Button
+                color="primary"
+                size="lg"
+                style={{ width: "100%" }}
+                startContent={<FontAwesomeIcon icon={faDatabase} />}
+              >
+                View Analyzed Resumes
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
+
       <div className="bg-white mt-4 rounded-lg">
         {error && (
           <div className="bg-red-500 text-white p-4 rounded-lg text-center font-bold">

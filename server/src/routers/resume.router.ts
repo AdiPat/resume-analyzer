@@ -1,30 +1,10 @@
 // usersRouter.ts
-import "../commons/config";
+import { s3 } from "../commons/config";
 import express from "express";
 import multer from "multer";
-import AWS from "aws-sdk";
 import { nanoid } from "nanoid";
 import { StatusCodes } from "http-status-codes";
 import { db } from "../core";
-
-if (
-  !(
-    process.env.AWS_ACCESS_KEY_ID &&
-    process.env.AWS_SECRET_ACCESS_KEY &&
-    process.env.AWS_REGION
-  )
-) {
-  throw new Error("AWS credentials are not defined.");
-}
-
-// Configure AWS SDK
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
-const s3 = new AWS.S3();
 
 const storage = multer.memoryStorage();
 

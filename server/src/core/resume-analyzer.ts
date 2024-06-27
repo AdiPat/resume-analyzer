@@ -1,17 +1,26 @@
 import { s3 } from "../commons/config";
+import { openai } from "@ai-sdk/openai";
+import { generateText } from "ai";
 import pdf from "pdf-parse";
 
+type PresentationScore = {
+  presentation: {
+    score: number;
+    description: string;
+  };
+};
 
 class ResumeAnalyzer {
   private fileKey: string;
   private resumeText: string;
   private dataBuffer: Buffer | null;
+  private model: any;
 
   constructor(fileKey: string) {
     this.fileKey = fileKey;
     this.resumeText = "";
     this.dataBuffer = null;
-  }
+    this.model = openai("gpt-4o");
   }
 
   async fetchResume(): Promise<void> {
@@ -60,25 +69,42 @@ class ResumeAnalyzer {
     return this.resumeText;
   }
 
-  async parseResume() {
-    this.resumeText = "This is a sample resume text.";
-    throw new Error("Method not implemented.");
-  }
+  async getPresentationScore(): Promise<PresentationScore> {
+    const { text: score } = await generateText({
+      model: this.model,
+      prompt: `Determine a presentation score for the resume content between 1 to 5. 
+              The presentation of the resume is how well-structured and easy to read it is. 
+              Return only the number between 1 to 5.
+              Resume Content: ${this.resumeText}`,
+    });
 
-  async getPresentationScore() {
+    const { text: description } = await generateText({
+      model: this.model,
+      prompt: `Write a review on the presentation of the content in the resume. 
+              The presentation of the resume is how well-structured and easy to read it is. 
+              Resume Content: ${this.resumeText}`,
+    });
+
     return {
       presentation: {
-        score: 0.8,
-        message: "Your resume is well presented.",
+        score: parseInt(score),
+        description,
       },
     };
   }
 
   async getConcisenessScore() {
+    const { text } = await generateText({
+      model: this.model,
+      prompt: `Determine a conciseness score for the resume content between 1 to 5. 
+              The conciseness of the resume is how concise yet detailed the information is. 
+              Return only the number between 1 to 5.
+              Resume Content: ${this.resumeText}`,
+    });
+
     return {
       conciseness: {
-        score: 0.6,
-        message: "Your resume is concise.",
+        score: parseInt(text),
       },
     };
   }

@@ -22,4 +22,13 @@ describe("resume-analyzer", () => {
     expect(presentationScore.presentation).toHaveProperty("score");
     expect(presentationScore.presentation).toHaveProperty("description");
   });
+  it("should have a language and keywords score, description and ", async () => {
+    const resumeAnalyzer = new ResumeAnalyzer(SAMPLE_RESUME_KEY);
+    await resumeAnalyzer.parseResume();
+    const languageScore = await resumeAnalyzer.getLanguageAnalysis();
+    expect(languageScore).toHaveProperty("language_and_keywords");
+    expect(languageScore.language_and_keywords).toHaveProperty("score");
+    expect(languageScore.language_and_keywords).toHaveProperty("description");
+    expect(languageScore.language_and_keywords).toHaveProperty("keywords");
+  });
 });

@@ -118,13 +118,25 @@ class ResumeAnalyzer {
     };
   }
 
-  async getKeywordsAnalysis() {
+  async getLanguageAnalysis(): Promise<any> {
+    const { text } = await generateText({
+      model: this.model,
+      prompt: `Analyze the resume for language and keywords and provide a score based on the relevance of the detected keywords to the job role. 
+              The score should be a value between 1 and 5 (inclusive), indicating how well the resume matches the desired language and keyword criteria. 
+              Additionally, list the detected keywords and provide a brief message summarizing the relevance of the keywords.
+              The message is a 3-paragraph long review of the language and keywords used in the document.
+              Return a JSON with the following structure: (score: number, keywords: string[], description: string)
+              Resume Content: ${this.resumeText}`,
+    });
+
+    const resultJson = text
+      .replace(/^```json\n|\n```$/g, "")
+      .replace(/\r?\n|\r/g, "");
+
+    const result = JSON.parse(resultJson);
+
     return {
-      keywords: {
-        score: 0.7,
-        message: "Your resume contains relevant keywords.",
-        keywords_detected: ["Java", "Python", "JavaScript"],
-      },
+      language_and_keywords: result,
     };
   }
 

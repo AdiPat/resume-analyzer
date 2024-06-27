@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import App from "./App";
-import { UploadsPage } from "./pages";
+import { ResumePage, UploadsPage } from "./pages";
 
 const routes: RouteObject[] = [
   {
@@ -10,6 +10,10 @@ const routes: RouteObject[] = [
   {
     path: "/uploads",
     element: <UploadsPage />,
+  },
+  {
+    path: "/resumes/:uploadId",
+    element: <ResumePage />,
   },
 ];
 

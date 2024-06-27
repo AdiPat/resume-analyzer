@@ -47,7 +47,7 @@ function UploadsPage() {
         Uploads
       </h1>
       <p className="text-white text-center mb-4">
-        Click to view analyzed resumes.
+        All your analyzed resumes in one place.
       </p>
       <Input
         type="email"
@@ -57,6 +57,7 @@ function UploadsPage() {
         startContent={<FontAwesomeIcon icon={faSearch} />}
         onValueChange={setSearchQuery}
         className="mb-8"
+        size="lg"
       />
       <div className="flex flex-col mt-4 gap-4 justify-center items-center">
         {uploads.map((upload, idx) => (

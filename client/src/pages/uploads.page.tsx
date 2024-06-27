@@ -14,6 +14,8 @@ function UploadsPage() {
   const [uploads, setUploads] = useState<Upload[]>([]);
 
   useEffect(() => {
+    document.title = "Resume Analyzer: Uploads";
+
     const loadUploads = async () => {
       const allKeys = await cache.getAllKeys();
       const uploadKeys = allKeys.filter((key) => key.startsWith("uploads_"));

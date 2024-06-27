@@ -36,7 +36,7 @@ class ResumeAnalyzer {
       .promise()
       .then((data) => data.Body as Buffer)
       .catch((err) => {
-        console.error("failed to fetch resume from s3");
+        console.error("failed to fetch resume from s3", err);
         return null;
       });
   }
@@ -65,7 +65,6 @@ class ResumeAnalyzer {
   }
 
   async getResumeText(): Promise<string> {
-    console.log(this.resumeText);
     return this.resumeText;
   }
 
@@ -82,6 +81,7 @@ class ResumeAnalyzer {
       model: this.model,
       prompt: `Write a review on the presentation of the content in the resume. 
               The presentation of the resume is how well-structured and easy to read it is. 
+              Return the response in plain-text in 3 paragraphs.
               Resume Content: ${this.resumeText}`,
     });
 
@@ -102,18 +102,18 @@ class ResumeAnalyzer {
               Resume Content: ${this.resumeText}`,
     });
 
+    const { text: description } = await generateText({
+      model: this.model,
+      prompt: `Write a review on the conciseness of the content in the resume. 
+              The conciseness of the resume is how concise yet detailed the information is. 
+               Return the response in plain-text in 3 paragraphs.
+              Resume Content: ${this.resumeText}`,
+    });
+
     return {
       conciseness: {
         score: parseInt(text),
-      },
-    };
-  }
-
-  async getRelevanceScore() {
-    return {
-      relevance: {
-        score: 0.9,
-        message: "Your resume is relevant.",
+        description,
       },
     };
   }
@@ -140,12 +140,25 @@ class ResumeAnalyzer {
     };
   }
 
-  getImpactScore() {
+  async getImpactScore(): Promise<any> {
+    const { text } = await generateText({
+      model: this.model,
+      prompt: `Analyze the resume for impact and provide a score based on the impactfulness of the detected skills in the job role. 
+              The score should be a value between 1 and 5 (inclusive), indicating how impactful each sentence in the resume is. 
+              Additionally, list the detected skills.
+              The message is a 3-paragraph long review of the impactfulness of the resume.
+              Return a JSON with the following structure: (score: number, skills: string[], description: string)
+              Resume Content: ${this.resumeText}`,
+    });
+
+    const resultJson = text
+      .replace(/^```json\n|\n```$/g, "")
+      .replace(/\r?\n|\r/g, "");
+
+    const result = JSON.parse(resultJson);
+
     return {
-      impact: {
-        score: 0.8,
-        message: "Your resume is impactful.",
-      },
+      impact: result,
     };
   }
 }

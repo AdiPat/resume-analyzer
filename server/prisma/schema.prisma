@@ -14,9 +14,21 @@ datasource db {
 }
 
 model ResumeFile {
-  id       String @id @default(cuid()) @map("_id")
-  uploadId String
-  fileName String
-  bucket   String
-  key      String
+  id             String           @id @default(cuid()) @map("_id")
+  uploadId       String           @unique
+  fileName       String
+  bucket         String
+  key            String
+  resumeAnalysis ResumeAnalysis[]
+  resumeFileId   String
+}
+
+model ResumeAnalysis {
+  id           String     @id @default(cuid()) @map("_id")
+  uploadId     String
+  conciseness  Json
+  relevance    Json
+  presentation Json
+  impact       Json
+  resumeFile   ResumeFile @relation(fields: [uploadId], references: [id])
 }

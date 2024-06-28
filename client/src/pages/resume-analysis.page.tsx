@@ -22,7 +22,7 @@ function ResumeAnalysisPage() {
       getAnalysis({ uploadId: uploadId })
         .then((analysis) => {
           console.log({ analysis });
-          if (analysis.error) {
+          if (!analysis || analysis.error) {
             setMessage("Resume Analysis is not ready. Please try again later.");
             setResumeAnalysis(null);
           } else {
@@ -59,7 +59,8 @@ function ResumeAnalysisPage() {
         <div className="flex w-full flex-col">
           <Tabs aria-label="Options">
             {Object.keys(resumeAnalysis).map((key) => {
-              if (["id", "uploadId"].includes(key)) return null;
+              if (["id", "uploadId", "recommendedJobs"].includes(key))
+                return null;
               return (
                 <Tab key={key} title={capitalizeFirstLetter(key)}>
                   <Card>

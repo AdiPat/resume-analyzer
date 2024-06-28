@@ -24,11 +24,12 @@ model ResumeFile {
 }
 
 model ResumeAnalysis {
-  id           String     @id @default(cuid()) @map("_id")
-  uploadId     String
-  conciseness  Json
-  relevance    Json
-  presentation Json
-  impact       Json
-  resumeFile   ResumeFile @relation(fields: [uploadId], references: [id])
+  id             String     @id @default(cuid()) @map("_id")
+  uploadId       String
+  conciseness    Json
+  relevance      Json
+  presentation   Json
+  impact         Json
+  resumeFile     ResumeFile @relation(fields: [uploadId], references: [id])
+  recommendedJob String
 }

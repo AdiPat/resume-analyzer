@@ -171,6 +171,17 @@ class ResumeAnalyzer {
     };
   }
 
+  async getRecommendedJob(): Promise<string> {
+    const { text } = await generateText({
+      model: this.model,
+      prompt: `Analyze the resume and recommend a job title based on the content. 
+              Return the recommended job title as a string.
+              Resume Content: ${this.resumeText}`,
+    });
+
+    return text;
+  }
+
   dispatchAnalysisEvent() {
     this.eventEmitter.emit("resume:analyze");
   }
@@ -210,12 +221,18 @@ class ResumeAnalyzer {
       return {};
     });
 
+    const recommendedJob = await this.getRecommendedJob().catch((err) => {
+      console.error("failed to get recommended job", err);
+      return "";
+    });
+
     await db.resumeAnalysis.create({
       data: {
         uploadId: this.uploadId,
         presentation: (presentation as any).presentation,
         conciseness: (conciseness as any).conciseness,
         relevance: relevance.language_and_keywords,
+        recommendedJob,
         impact: impact.impact,
       },
     });

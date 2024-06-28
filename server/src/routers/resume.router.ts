@@ -4,7 +4,7 @@ import express from "express";
 import multer from "multer";
 import { nanoid } from "nanoid";
 import { StatusCodes } from "http-status-codes";
-import { db } from "../core";
+import { db, ResumeAnalyzer } from "../core";
 
 const storage = multer.memoryStorage();
 
@@ -75,12 +75,36 @@ resumeRouter.post(
       });
     }
 
+    const resumeAnalyzer = new ResumeAnalyzer(uploadResult.Key);
+
+    resumeAnalyzer.dispatchAnalysisEvent();
+
     res.status(StatusCodes.CREATED).json({
       uploadId,
       message: "File uploaded successfully.",
     });
   }
 );
+
+resumeRouter.get("/analysis/:uploadId", async (req, res) => {
+  const uploadId = req.params.uploadId;
+
+  console.log({ uploadId });
+
+  const resumeAnalysis = await db.resumeAnalysis.findFirst({
+    where: {
+      uploadId,
+    },
+  });
+
+  if (!resumeAnalysis) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      error: "Resume analysis not found.",
+    });
+  }
+
+  res.status(StatusCodes.OK).json(resumeAnalysis);
+});
 
 // Define a GET route
 resumeRouter.get("/", (req, res) => {

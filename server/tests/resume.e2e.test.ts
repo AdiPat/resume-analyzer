@@ -14,3 +14,13 @@ describe("GET /resume", () => {
     });
   });
 });
+
+describe("/resume/analysis", () => {
+  it("responds with 404 NOT FOUND", async () => {
+    await request(app).get("/analysis/123").expect(404);
+  });
+
+  it("responds with 200 OK", async () => {
+    await request(app).get("/analysis/TuOPve").expect(200);
+  });
+});

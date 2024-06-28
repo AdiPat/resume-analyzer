@@ -20,7 +20,7 @@ model ResumeFile {
   bucket         String
   key            String
   resumeAnalysis ResumeAnalysis[]
-  resumeFileId   String
+  resumeFileId   String?
 }
 
 model ResumeAnalysis {

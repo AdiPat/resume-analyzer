@@ -2,6 +2,9 @@ import { s3 } from "../commons/config";
 import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import pdf from "pdf-parse";
+import { EventEmitter } from "events";
+import { extractUploadIdFromS3Key } from "../commons";
+import { db } from "./db";
 
 type PresentationScore = {
   presentation: {
@@ -11,16 +14,22 @@ type PresentationScore = {
 };
 
 class ResumeAnalyzer {
+  private uploadId: string;
   private fileKey: string;
   private resumeText: string;
   private dataBuffer: Buffer | null;
   private model: any;
+  private eventEmitter: EventEmitter;
 
   constructor(fileKey: string) {
-    this.fileKey = fileKey;
+    this.fileKey = fileKey; // format: resumes/{uploadId}_{fileName}
+    this.uploadId = extractUploadIdFromS3Key(fileKey) ?? "";
     this.resumeText = "";
     this.dataBuffer = null;
     this.model = openai("gpt-4o");
+    this.eventEmitter = new EventEmitter();
+
+    this.eventEmitter.on("resume:analyze", this.handleAnalyzeEvent.bind(this));
   }
 
   async fetchResume(): Promise<void> {
@@ -160,6 +169,56 @@ class ResumeAnalyzer {
     return {
       impact: result,
     };
+  }
+
+  dispatchAnalysisEvent() {
+    this.eventEmitter.emit("resume:analyze");
+  }
+
+  async handleAnalyzeEvent(): Promise<void> {
+    console.log("analyzing resume: ", this.uploadId);
+
+    await this.parseResume();
+
+    const resumeAnalysis = await db.resumeAnalysis.findFirst({
+      where: {
+        uploadId: this.uploadId,
+      },
+    });
+
+    if (resumeAnalysis) {
+      return;
+    }
+
+    const presentation = await this.getPresentationScore().catch((err) => {
+      console.error("failed to get presentation score", err);
+      return {};
+    });
+
+    const conciseness = await this.getConcisenessScore().catch((err) => {
+      console.error("failed to get conciseness score", err);
+      return {};
+    });
+
+    const relevance = await this.getLanguageAnalysis().catch((err) => {
+      console.error("failed to get language score", err);
+      return {};
+    });
+
+    const impact = await this.getImpactScore().catch((err) => {
+      console.error("failed to get impact score", err);
+      return {};
+    });
+
+    await db.resumeAnalysis.create({
+      data: {
+        uploadId: this.uploadId,
+        presentation: (presentation as any).presentation,
+        conciseness: (conciseness as any).conciseness,
+        relevance: relevance.language_and_keywords,
+        impact: impact.impact,
+      },
+    });
   }
 }
 

@@ -244,6 +244,35 @@ class ResumeAnalyzer {
       },
     });
   }
+
+  async updateRecommendedJobs(): Promise<void> {
+    const job = await db.resumeAnalysis.findFirst({
+      where: {
+        uploadId: this.uploadId,
+      },
+    });
+
+    if (!job) {
+      console.log(`resume analysis not found for uploadId=${this.uploadId}`);
+      return;
+    }
+
+    if (!job.recommendedJobs || job.recommendedJobs.length === 0) {
+      const recommendedJobs = await this.getRecommendedJobs().catch((err) => {
+        console.error("failed to get recommended job", err);
+        return [];
+      });
+
+      await db.resumeAnalysis.update({
+        where: {
+          id: job.id,
+        },
+        data: {
+          recommendedJobs,
+        },
+      });
+    }
+  }
 }
 
 export { ResumeAnalyzer };

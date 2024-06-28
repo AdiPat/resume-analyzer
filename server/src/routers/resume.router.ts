@@ -91,7 +91,7 @@ resumeRouter.get("/analysis/:uploadId", async (req, res) => {
 
   console.log({ eventId: "resume:analysis", uploadId });
 
-  const resumeAnalysis = await db.resumeAnalysis.findFirst({
+  let resumeAnalysis = await db.resumeAnalysis.findFirst({
     where: {
       uploadId,
     },
@@ -102,6 +102,33 @@ resumeRouter.get("/analysis/:uploadId", async (req, res) => {
       error: "Resume analysis not found.",
     });
   }
+
+  if (
+    !resumeAnalysis.recommendedJobs ||
+    resumeAnalysis.recommendedJobs.length === 0
+  ) {
+    const resume = await db.resumeFile.findFirst({
+      where: {
+        uploadId,
+      },
+    });
+
+    if (!resume) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Resume not found.",
+      });
+    }
+
+    const resumeAnalyzer = new ResumeAnalyzer(resume.key);
+    await resumeAnalyzer.parseResume();
+    await resumeAnalyzer.updateRecommendedJobs();
+  }
+
+  resumeAnalysis = await db.resumeAnalysis.findFirst({
+    where: {
+      uploadId,
+    },
+  });
 
   res.status(StatusCodes.OK).json(resumeAnalysis);
 });

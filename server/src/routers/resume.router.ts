@@ -89,7 +89,7 @@ resumeRouter.post(
 resumeRouter.get("/analysis/:uploadId", async (req, res) => {
   const uploadId = req.params.uploadId;
 
-  console.log({ uploadId });
+  console.log({ eventId: "resume:analysis", uploadId });
 
   const resumeAnalysis = await db.resumeAnalysis.findFirst({
     where: {

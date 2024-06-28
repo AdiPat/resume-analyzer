@@ -171,15 +171,22 @@ class ResumeAnalyzer {
     };
   }
 
-  async getRecommendedJob(): Promise<string> {
+  async getRecommendedJobs(): Promise<string[]> {
     const { text } = await generateText({
       model: this.model,
       prompt: `Analyze the resume and recommend a job title based on the content. 
-              Return the recommended job title as a string.
+              Return the result as a JSON-array of strings containing the recommended job titles.
+              Return 5 recommended job titles based on the resume content.
+              Format Example: ["Software Engineer", "DevOps Engineer", "Technical Program Manager"]
               Resume Content: ${this.resumeText}`,
     });
+    const resultJson = text
+      .replace(/^```json\n|\n```$/g, "")
+      .replace(/\r?\n|\r/g, "");
 
-    return text;
+    const result = JSON.parse(resultJson);
+
+    return result;
   }
 
   dispatchAnalysisEvent() {
@@ -221,9 +228,9 @@ class ResumeAnalyzer {
       return {};
     });
 
-    const recommendedJob = await this.getRecommendedJob().catch((err) => {
+    const recommendedJobs = await this.getRecommendedJobs().catch((err) => {
       console.error("failed to get recommended job", err);
-      return "";
+      return [];
     });
 
     await db.resumeAnalysis.create({
@@ -232,7 +239,7 @@ class ResumeAnalyzer {
         presentation: (presentation as any).presentation,
         conciseness: (conciseness as any).conciseness,
         relevance: relevance.language_and_keywords,
-        recommendedJob,
+        recommendedJobs,
         impact: impact.impact,
       },
     });

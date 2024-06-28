@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { getAnalysis } from "../api";
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody, Chip } from "@nextui-org/react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import {
   formatText,
@@ -57,6 +57,21 @@ function ResumeAnalysisPage() {
 
       {resumeAnalysis && (
         <div className="flex w-full flex-col">
+          <div className="flex gap-4 bg-gray-100 my-6 p-8 rounded-lg items-center">
+            <h2
+              className="text-sm font-bold mb-4 uppercase"
+              style={{ width: "50%" }}
+            >
+              Recommended Jobs:{" "}
+            </h2>
+            <p>
+              {(resumeAnalysis as any)?.recommendedJobs.map((job: string) => (
+                <Chip className="mx-2 my-1" color="primary">
+                  {job}
+                </Chip>
+              ))}
+            </p>
+          </div>
           <Tabs aria-label="Options">
             {Object.keys(resumeAnalysis).map((key) => {
               if (["id", "uploadId", "recommendedJobs"].includes(key))

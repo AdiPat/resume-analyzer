@@ -15,7 +15,7 @@ function App() {
   const inputFile = useRef(null);
 
   useEffect(() => {
-    document.title = "Resume Analyzer";
+    document.title = "AI Resume Analyzer";
   }, []);
 
   const handleUploadClick = (): void => {
@@ -57,10 +57,10 @@ function App() {
         <Image className="mr-8" src="/logo.png" width={300} height={300} />
         <div className="ml-4">
           <h1 className="text-4xl font-bold text-white mb-4 text-center">
-            Resume Analyzer 📈
+            AI Resume Analyzer 📈
           </h1>
           <p className="text-white mb-4">
-            Optimize Your Resume. Achieve Your Dream Job. ✅
+            Leverage AI to Optimize Your Resume. Achieve Your Dream Job. ✅
           </p>
           <p className="text-white">
             In today's competitive job market, your resume is your first

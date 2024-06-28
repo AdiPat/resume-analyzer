@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import App from "./App";
-import { ResumePage, UploadsPage } from "./pages";
+import { ResumeAnalysisPage, UploadsPage } from "./pages";
 
 const routes: RouteObject[] = [
   {
@@ -13,7 +13,7 @@ const routes: RouteObject[] = [
   },
   {
     path: "/resumes/:uploadId",
-    element: <ResumePage />,
+    element: <ResumeAnalysisPage />,
   },
 ];
 

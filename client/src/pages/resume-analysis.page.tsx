@@ -1,11 +1,22 @@
 import { useEffect } from "react";
 import { useParams } from "react-router";
+import { getAnalysis } from "../api";
 
-function ResumePage() {
+function ResumeAnalysisPage() {
   const { uploadId } = useParams();
 
   useEffect(() => {
     document.title = "Resume Analysis";
+
+    if (uploadId) {
+      getAnalysis({ uploadId: uploadId })
+        .then((analysis) => {
+          console.log({ analysis });
+        })
+        .catch((err) => {
+          console.error("failed to get analysis", err);
+        });
+    }
   });
 
   return (
@@ -23,4 +34,4 @@ function ResumePage() {
   );
 }
 
-export { ResumePage };
+export { ResumeAnalysisPage };

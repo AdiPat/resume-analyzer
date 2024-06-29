@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { getAnalysis } from "../api";
+import { getAnalysis, getResumeFilename } from "../api";
 import { Tabs, Tab, Card, CardBody, Chip } from "@nextui-org/react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import {
@@ -15,6 +15,17 @@ function ResumeAnalysisPage() {
   const [message, setMessage] = useState("");
 
   const { uploadId } = useParams();
+
+  const [fileName, setFilename] = useState(uploadId);
+
+  useEffect(() => {
+    if (uploadId) {
+      getResumeFilename(uploadId).then((filename: string) => {
+        console.log({ filename });
+        setFilename(filename);
+      });
+    }
+  }, [uploadId]);
 
   useEffect(() => {
     document.title = "AI Resume Analysis";
@@ -42,18 +53,15 @@ function ResumeAnalysisPage() {
       className="flex flex-col bg-gray-800 rounded-lg p-8 m-8 mx-auto"
       style={{ width: "80%" }}
     >
-      <h1 className="text-4xl font-bold mb-4 text-white text-center">
-        Resume: {uploadId}
+      <h1 className="text-2xl font-bold mb-4 text-white text-center">
+        {fileName}
       </h1>
+      <h2 className="text-white text-center mb-8">Upload ID: {uploadId}</h2>
 
-      {message ? (
+      {message && (
         <div className="bg-orange-200 border rounded-lg p-8 mb-4">
           <span className="block sm:inline">{message}</span>
         </div>
-      ) : (
-        <p className="text-white text-center mb-4">
-          Here is a detailed analysis of your resume!
-        </p>
       )}
 
       {resumeAnalysis && (

@@ -133,6 +133,27 @@ resumeRouter.get("/analysis/:uploadId", async (req, res) => {
   res.status(StatusCodes.OK).json(resumeAnalysis);
 });
 
+resumeRouter.get("/:uploadId/filename", async (req, res) => {
+  const uploadId = req.params.uploadId;
+
+  const resumeFile = await db.resumeFile.findFirst({
+    where: {
+      uploadId,
+    },
+  });
+
+  if (!resumeFile) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      error: "Resume file not found.",
+    });
+  }
+
+  res.status(StatusCodes.OK).json({
+    fileName: resumeFile.fileName,
+    uploadId,
+  });
+});
+
 // Define a GET route
 resumeRouter.get("/", (req, res) => {
   res.json({

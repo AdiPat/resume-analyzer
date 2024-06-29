@@ -31,4 +31,31 @@ function splitIntoParagraphs(
   return paragraphs;
 }
 
-export { cache, splitIntoParagraphs, capitalizeFirstLetter, formatText };
+function splitTextIntoTwoLineEntries(text: string): string[] {
+  if (!text) {
+    return [];
+  }
+
+  const lines = text.match(/[^.!?]+[.!?](\s|$)/g) || [];
+  const result = [];
+
+  for (let i = 0; i < lines.length; i += 2) {
+    // Check if the next line exists to avoid undefined in the result
+    if (lines[i + 1]) {
+      result.push(`${lines[i]}\n${lines[i + 1].trim()}`);
+    } else {
+      // For the last line if it's alone
+      result.push(lines[i].trim());
+    }
+  }
+
+  return result;
+}
+
+export {
+  cache,
+  splitIntoParagraphs,
+  splitTextIntoTwoLineEntries,
+  capitalizeFirstLetter,
+  formatText,
+};

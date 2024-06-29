@@ -7,6 +7,7 @@ import {
   formatText,
   splitIntoParagraphs,
   capitalizeFirstLetter,
+  splitTextIntoTwoLineEntries,
 } from "../common";
 
 function ResumeAnalysisPage() {
@@ -94,13 +95,18 @@ function ResumeAnalysisPage() {
                           </div>
                         </div>
 
-                        {splitIntoParagraphs(
-                          formatText((resumeAnalysis[key] as any).description)
-                        ).map((paragraph, idx) => (
-                          <p key={idx} className="text-lg text-gray-800">
-                            {paragraph}
-                          </p>
-                        ))}
+                        <ul className="list-disc list-inside">
+                          {splitTextIntoTwoLineEntries(
+                            formatText((resumeAnalysis[key] as any).description)
+                          ).map((paragraph, idx) => (
+                            <li
+                              key={idx}
+                              className="text-lg text-gray-800 mb-2"
+                            >
+                              {paragraph}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </CardBody>
                   </Card>
